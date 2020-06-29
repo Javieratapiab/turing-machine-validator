@@ -37,30 +37,27 @@ bool check_if_alphabet_only(char * element) {
   return is_alphabetic;
 }
 
-void validate_first_and_last_elements(char * element, int element_index, int line_counter) {
+void validate_current_and_next_status(char * element, int element_index, int line_counter) {
   if (strcmp(element, "halt") == 0 && element_index == 0) {
     failed_validation = true;
     printf("Current status invalid (\"halt\"), line: %d\n", line_counter);
   } else {
-    if (!check_if_numbers_only(element) && !check_if_alphabet_only(element)) {
-      if (element_index == 0) {
-        failed_validation = true;
-        printf("Current status invalid, line: %d\n", line_counter);
-      } else {
-        failed_validation = true;
-        printf("Next status invalid, line: %d\n", line_counter);
-      }
+    if (check_if_numbers_only(element) || check_if_alphabet_only(element)) { return; }
+    if (element_index == 0) {
+      failed_validation = true;
+      printf("Current status invalid, line: %d\n", line_counter);
+    } else {
+      failed_validation = true;
+      printf("Next status invalid, line: %d\n", line_counter);
     }
   }
 }
 
-void validate_second_and_third_elements(char * element, int element_index, int line_counter) {
+void validate_current_and_next_symbol(char * element, int element_index, int line_counter) {
   if (check_if_numbers_only(element) || check_if_alphabet_only(element) || strcmp(element, "*") == 0 || strcmp(element, "_") == 0) { return; }
-  /* Símbolo actual */
   if (element_index == 1) {
     failed_validation = true;
     printf("Current symbol invalid, line: %d\n", line_counter);
-  /* Nuevo símbolo */
   } else {
     failed_validation = true;
     printf("New symbol invalid, line: %d\n", line_counter);
@@ -68,7 +65,7 @@ void validate_second_and_third_elements(char * element, int element_index, int l
 }
 
 /* Movement */
-void validate_fourth_element(char * element, int line_counter) {
+void validate_movement(char * element, int line_counter) {
   if (strcmp(element, "l") == 0 || strcmp(element, "r") == 0 || strcmp(element, "*") == 0) { return; }
   failed_validation = true;
   printf("Invalid movement, line: %d\n", line_counter);
@@ -94,29 +91,29 @@ void start_validation() {
       char * element = ptr;
       /* Current status */
       if (words_counter == 0) {
-        validate_first_and_last_elements(element, words_counter, line_counter);
+        validate_current_and_next_status(element, words_counter, line_counter);
       /* Current symbol and next symbol */
       } else if (words_counter == 1 || words_counter == 2) {
-        validate_second_and_third_elements(element, words_counter, line_counter);
+        validate_current_and_next_symbol(element, words_counter, line_counter);
       /* Movement */
       } else if (words_counter == 3) {
-        validate_fourth_element(element, line_counter);
+        validate_movement(element, line_counter);
       /* Next status */
       } else if (words_counter == 4) {
-        validate_first_and_last_elements(element, words_counter, line_counter);
+        validate_current_and_next_status(element, words_counter, line_counter);
       }
    
       words_counter++;
       ptr = strtok(NULL, delim);
     }
 
-    /* Instruction (or line) should have 5 elements */
+    /* Instruction (or line) must have 5 elements */
     if (words_counter != 5) {
       failed_validation = true;
       printf("Number of elements in line %d should be equal to 5, total elements found: %d\n", line_counter, words_counter);
     }
 
-    /* Entry should have 50 lines maximum */
+    /* Entry must have 50 lines as maximum */
     if (line_counter > 50) {
       failed_validation = true;
       printf("The number of lines should be less or equal to 50, total lines: %d\n", line_counter);
