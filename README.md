@@ -1,6 +1,6 @@
 # Turing machine validator
 
-A simple C program to validate a turing machine as entry file
+A simple C program to validate a turing machine as entry file. 🚀
 
 ## Instructions
 
