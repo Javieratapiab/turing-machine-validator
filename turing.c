@@ -64,7 +64,6 @@ void validate_current_and_next_symbol(char * element, int element_index, int lin
   }
 }
 
-/* Movement */
 void validate_movement(char * element, int line_counter) {
   if (strcmp(element, "l") == 0 || strcmp(element, "r") == 0 || strcmp(element, "*") == 0) { return; }
   failed_validation = true;
@@ -89,31 +88,43 @@ void start_validation() {
     while(ptr != NULL)
     {
       char * element = ptr;
-      /* Current status */
-      if (words_counter == 0) {
+      switch (words_counter)
+      {
+      case 0:
+        // Current status
         validate_current_and_next_status(element, words_counter, line_counter);
-      /* Current symbol and next symbol */
-      } else if (words_counter == 1 || words_counter == 2) {
+        break;
+      case 1:
+        // Current symbol
         validate_current_and_next_symbol(element, words_counter, line_counter);
-      /* Movement */
-      } else if (words_counter == 3) {
+        break;
+      case 2:
+        // Next symbol
+        validate_current_and_next_symbol(element, words_counter, line_counter);
+        break;
+      case 3:
+        // Movement
         validate_movement(element, line_counter);
-      /* Next status */
-      } else if (words_counter == 4) {
+        break;
+      case 4:
+        // Next status
         validate_current_and_next_status(element, words_counter, line_counter);
+        break;
+      default:
+        break;
       }
-   
+
       words_counter++;
       ptr = strtok(NULL, delim);
     }
 
-    /* Instruction (or line) must have 5 elements */
+    // Instruction must have 5 elements
     if (words_counter != 5) {
       failed_validation = true;
       printf("Number of elements in line %d should be equal to 5, total elements found: %d\n", line_counter, words_counter);
     }
 
-    /* Entry must have 50 lines as maximum */
+    // Entry must have less or equal to 50
     if (line_counter > 50) {
       failed_validation = true;
       printf("The number of lines should be less or equal to 50, total lines: %d\n", line_counter);
@@ -131,7 +142,9 @@ int main() {
   start_validation();
 
   /* Print if entry is valid */
-  if(!failed_validation) { printf("The entry is valid!\n"); }
+  if (!failed_validation) {
+    printf("The entry is valid!\n");
+  }
 
   return 0;
 }
